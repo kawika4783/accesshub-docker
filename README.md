@@ -16,6 +16,14 @@ Edit `.env` and replace both passwords. Then start AccessHub:
 docker compose up -d --build
 ```
 
+Both values are required. Confirm Docker Compose can read them before starting:
+
+```sh
+docker compose config --quiet
+```
+
+If this reports that `POSTGRES_PASSWORD` or `INITIAL_ADMIN_PASSWORD` is missing, make sure the file is named exactly `.env` and is located beside `docker-compose.yml`.
+
 Open `http://YOUR_VPS_IP:8000`. For a public deployment, connect the service to an HTTPS reverse proxy such as Caddy, Traefik, or Nginx Proxy Manager.
 
 ## Storage
