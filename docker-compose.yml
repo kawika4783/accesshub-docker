@@ -1,0 +1,43 @@
+services:
+  accesshub:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://accesshub:${POSTGRES_PASSWORD}@database:5432/accesshub
+      INITIAL_ADMIN_PASSWORD: ${INITIAL_ADMIN_PASSWORD}
+      NODE_ENV: production
+      PORT: 8000
+    volumes:
+      - accesshub_uploads:/app/work/uploads
+    depends_on:
+      database:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:8000/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  database:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: accesshub
+      POSTGRES_USER: accesshub
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - accesshub_database:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U accesshub -d accesshub"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  accesshub_database:
+  accesshub_uploads:

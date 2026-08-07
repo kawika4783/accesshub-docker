@@ -1,0 +1,8 @@
+node_modules
+dist
+work
+.git
+.github
+.env
+*.zip
+*.png
