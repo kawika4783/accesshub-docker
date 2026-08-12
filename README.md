@@ -10,21 +10,20 @@ cd accesshub-docker
 cp .env.docker.example .env
 ```
 
-Edit `.env`, replace both passwords, and set the hostname you want AccessHub to use. Do not include `http://`, `https://`, or a path:
+Edit `.env` and replace both passwords:
 
 ```text
 POSTGRES_PASSWORD=your-long-database-password
 INITIAL_ADMIN_PASSWORD=your-long-admin-password
-APP_DOMAIN=accesshub.yourdomain.com
 ```
 
-At your DNS provider, create an **A record** for that hostname pointing to the VPS public IPv4 address. Make sure ports **80** and **443** are open. Then start AccessHub:
+Then start AccessHub:
 
 ```sh
 docker compose up -d --build
 ```
 
-All three values are required. Confirm Docker Compose can read them before starting:
+Both values are required. Confirm Docker Compose can read them before starting:
 
 ```sh
 docker compose config --quiet
@@ -32,9 +31,13 @@ docker compose config --quiet
 
 If this reports that a required value is missing, make sure the file is named exactly `.env` and is located beside `docker-compose.yml`.
 
-Open `https://YOUR_APP_DOMAIN`. The included Caddy proxy obtains and renews HTTPS automatically. AccessHub is no longer exposed directly on the VPS IP or port `8000`.
+On this Hostinger VPS, open AccessHub using Hostinger's generated HTTPS address:
 
-If another service already uses ports 80 or 443, connect AccessHub to that existing reverse proxy instead of starting the included `proxy` service.
+```text
+https://accesshub-docker.srv1831469.hstgr.cloud
+```
+
+Hostinger terminates HTTPS and forwards requests to AccessHub on port `8000`. Always sign in through the HTTPS hostname rather than the VPS IP address; the production session cookie is intentionally accepted only over HTTPS.
 
 ## Storage
 

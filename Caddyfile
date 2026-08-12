@@ -1,4 +1,0 @@
-{$APP_DOMAIN} {
-  encode zstd gzip
-  reverse_proxy accesshub:8000
-}
