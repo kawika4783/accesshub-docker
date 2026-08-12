@@ -7,6 +7,9 @@ This package runs AccessHub on any Linux VPS with Docker Compose. It includes th
 ```sh
 git clone https://github.com/kawika4783/accesshub-docker.git
 cd accesshub-docker
+```
+
+```sh
 cp .env.docker.example .env
 ```
 
@@ -16,6 +19,17 @@ Edit `.env` and replace both passwords:
 POSTGRES_PASSWORD=your-long-database-password
 INITIAL_ADMIN_PASSWORD=your-long-admin-password
 ```
+
+### Hostinger Docker Manager
+
+When deploying with **Compose from URL**, the GitHub repository does not include a local `.env` file. In Hostinger Docker Manager, open the project's **Environment variables (`.env`)** section and add these before clicking **Save and deploy**:
+
+```text
+POSTGRES_PASSWORD=a-long-random-letters-and-numbers-only-password
+INITIAL_ADMIN_PASSWORD=your-private-initial-admin-password
+```
+
+Do not add real passwords to GitHub. For `POSTGRES_PASSWORD`, use letters and numbers only because it is inserted into the PostgreSQL connection URL. Change the initial administrator password from the AccessHub account menu immediately after the first login.
 
 Then start AccessHub:
 
