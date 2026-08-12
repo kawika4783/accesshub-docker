@@ -4,8 +4,8 @@ services:
       context: .
       dockerfile: Dockerfile
     restart: unless-stopped
-    ports:
-      - "8000:8000"
+    expose:
+      - "8000"
     environment:
       DATABASE_URL: postgresql://accesshub:${POSTGRES_PASSWORD:?Create .env and set POSTGRES_PASSWORD}@database:5432/accesshub
       INITIAL_ADMIN_PASSWORD: ${INITIAL_ADMIN_PASSWORD:?Create .env and set INITIAL_ADMIN_PASSWORD}
@@ -22,6 +22,23 @@ services:
       timeout: 5s
       retries: 10
       start_period: 30s
+
+  proxy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      APP_DOMAIN: ${APP_DOMAIN:?Set APP_DOMAIN to the domain pointing to this VPS}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      accesshub:
+        condition: service_healthy
 
   database:
     image: postgres:17-alpine
@@ -41,3 +58,5 @@ services:
 volumes:
   accesshub_database:
   accesshub_uploads:
+  caddy_data:
+  caddy_config:
