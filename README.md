@@ -31,6 +31,14 @@ INITIAL_ADMIN_PASSWORD=your-private-initial-admin-password
 
 Do not add real passwords to GitHub. For `POSTGRES_PASSWORD`, use letters and numbers only because it is inserted into the PostgreSQL connection URL. Change the initial administrator password from the AccessHub account menu immediately after the first login.
 
+Use this direct Compose URL in Hostinger:
+
+```text
+https://raw.githubusercontent.com/kawika4783/accesshub-docker/main/docker-compose.yml
+```
+
+The Compose deployment pulls the published `ghcr.io/kawika4783/accesshub:latest` image, so Hostinger does not need the repository source files during deployment.
+
 Then start AccessHub:
 
 ```sh

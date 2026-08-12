@@ -1,8 +1,6 @@
 services:
   accesshub:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ghcr.io/kawika4783/accesshub:latest
     restart: unless-stopped
     ports:
       - "8000:8000"
