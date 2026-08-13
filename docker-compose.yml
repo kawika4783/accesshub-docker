@@ -5,8 +5,8 @@ services:
     ports:
       - "8000:8000"
     environment:
-      DATABASE_URL: postgresql://accesshub:${POSTGRES_PASSWORD:?Create .env and set POSTGRES_PASSWORD}@database:5432/accesshub
-      INITIAL_ADMIN_PASSWORD: ${INITIAL_ADMIN_PASSWORD:?Create .env and set INITIAL_ADMIN_PASSWORD}
+      DATABASE_URL: postgresql://accesshub:${POSTGRES_PASSWORD}@database:5432/accesshub
+      INITIAL_ADMIN_PASSWORD: ${INITIAL_ADMIN_PASSWORD}
       NODE_ENV: production
       PORT: 8000
     volumes:
@@ -27,7 +27,7 @@ services:
     environment:
       POSTGRES_DB: accesshub
       POSTGRES_USER: accesshub
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Create .env and set POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - accesshub_database:/var/lib/postgresql/data
     healthcheck:
