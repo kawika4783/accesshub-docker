@@ -17,8 +17,14 @@ services:
   accesshub:
     image: ghcr.io/kawika4783/accesshub:latest
     restart: unless-stopped
-    ports:
-      - "8000:8000"
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik-proxy
+      - traefik.http.routers.accesshub-docker.rule=Host(`accesshub-docker.srv1831469.hstgr.cloud`)
+      - traefik.http.routers.accesshub-docker.entrypoints=websecure
+      - traefik.http.routers.accesshub-docker.tls=true
+      - traefik.http.routers.accesshub-docker.tls.certresolver=letsencrypt
+      - traefik.http.services.accesshub-docker.loadbalancer.server.port=8000
     environment:
       DATABASE_HOST: database
       DATABASE_NAME: accesshub
@@ -30,6 +36,9 @@ services:
     volumes:
       - accesshub_uploads:/app/work/uploads
       - accesshub_secrets:/run/accesshub:ro
+    networks:
+      - default
+      - traefik-proxy
     depends_on:
       secrets-init:
         condition: service_completed_successfully
@@ -65,3 +74,7 @@ volumes:
   accesshub_database:
   accesshub_uploads:
   accesshub_secrets:
+
+networks:
+  traefik-proxy:
+    external: true
