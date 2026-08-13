@@ -10,6 +10,7 @@ services:
         umask 077
         test -s /run/accesshub/db_password || od -An -N24 -tx1 /dev/urandom | tr -d ' \n' > /run/accesshub/db_password
         test -s /run/accesshub/admin_password || od -An -N12 -tx1 /dev/urandom | tr -d ' \n' > /run/accesshub/admin_password
+        chmod 0444 /run/accesshub/db_password /run/accesshub/admin_password
     volumes:
       - accesshub_secrets:/run/accesshub
 
