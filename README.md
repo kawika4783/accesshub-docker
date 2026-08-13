@@ -43,7 +43,7 @@ https://accesshub-docker.srv1831469.hstgr.cloud
 
 Hostinger terminates HTTPS and forwards requests to AccessHub on port `8000`. Always sign in through the HTTPS hostname rather than the VPS IP address; the production session cookie is intentionally accepted only over HTTPS.
 
-The Hostinger deployment expects its standard `traefik-proxy` project/network to be installed. The Compose file registers `accesshub-docker.srv1831469.hstgr.cloud` with Traefik and does not publish port `8000` directly on the VPS.
+The Compose file registers `accesshub-docker.srv1831469.hstgr.cloud` with Hostinger's host-network Traefik service and does not publish port `8000` directly on the VPS.
 
 ## Storage
 

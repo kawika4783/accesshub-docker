@@ -19,7 +19,6 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.docker.network=traefik-proxy
       - traefik.http.routers.accesshub-docker.rule=Host(`accesshub-docker.srv1831469.hstgr.cloud`)
       - traefik.http.routers.accesshub-docker.entrypoints=websecure
       - traefik.http.routers.accesshub-docker.tls=true
@@ -36,9 +35,6 @@ services:
     volumes:
       - accesshub_uploads:/app/work/uploads
       - accesshub_secrets:/run/accesshub:ro
-    networks:
-      - default
-      - traefik-proxy
     depends_on:
       secrets-init:
         condition: service_completed_successfully
@@ -74,7 +70,3 @@ volumes:
   accesshub_database:
   accesshub_uploads:
   accesshub_secrets:
-
-networks:
-  traefik-proxy:
-    external: true
