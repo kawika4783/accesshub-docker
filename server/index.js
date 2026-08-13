@@ -1045,14 +1045,18 @@ const adminExists = (
   await db.query("select 1 from users where role='admin' limit 1")
 ).rowCount;
 if (!adminExists) {
-  const password = process.env.INITIAL_ADMIN_PASSWORD || "mmg123$";
+  const password = process.env.INITIAL_ADMIN_PASSWORD ||
+    (process.env.INITIAL_ADMIN_PASSWORD_FILE
+      ? (await fs.readFile(process.env.INITIAL_ADMIN_PASSWORD_FILE, "utf8")).trim()
+      : "");
+  if (!password) throw new Error("An initial administrator password is required");
   const passwordHash = await bcrypt.hash(password, 12);
   await db.query(
     "insert into users(username,password_hash,full_name,position_title,role) values('Admin',$1,'System Administrator','Administrator','admin')",
     [passwordHash],
   );
   console.warn(
-    "Created initial Admin account. Change the initial password immediately after deployment.",
+    `Created initial Admin account. Initial password: ${password} — sign in and change it immediately.`,
   );
 }
 await db.query("delete from sessions where expires_at<=now()");

@@ -1,17 +1,37 @@
 services:
+  secrets-init:
+    image: alpine:3.22
+    restart: "no"
+    command:
+      - /bin/sh
+      - -c
+      - |
+        set -eu
+        umask 077
+        test -s /run/accesshub/db_password || od -An -N24 -tx1 /dev/urandom | tr -d ' \n' > /run/accesshub/db_password
+        test -s /run/accesshub/admin_password || od -An -N12 -tx1 /dev/urandom | tr -d ' \n' > /run/accesshub/admin_password
+    volumes:
+      - accesshub_secrets:/run/accesshub
+
   accesshub:
     image: ghcr.io/kawika4783/accesshub:latest
     restart: unless-stopped
     ports:
       - "8000:8000"
     environment:
-      DATABASE_URL: postgresql://accesshub:${POSTGRES_PASSWORD}@database:5432/accesshub
-      INITIAL_ADMIN_PASSWORD: ${INITIAL_ADMIN_PASSWORD}
+      DATABASE_HOST: database
+      DATABASE_NAME: accesshub
+      DATABASE_USER: accesshub
+      DATABASE_PASSWORD_FILE: /run/accesshub/db_password
+      INITIAL_ADMIN_PASSWORD_FILE: /run/accesshub/admin_password
       NODE_ENV: production
       PORT: 8000
     volumes:
       - accesshub_uploads:/app/work/uploads
+      - accesshub_secrets:/run/accesshub:ro
     depends_on:
+      secrets-init:
+        condition: service_completed_successfully
       database:
         condition: service_healthy
     healthcheck:
@@ -27,9 +47,13 @@ services:
     environment:
       POSTGRES_DB: accesshub
       POSTGRES_USER: accesshub
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD_FILE: /run/accesshub/db_password
     volumes:
       - accesshub_database:/var/lib/postgresql/data
+      - accesshub_secrets:/run/accesshub:ro
+    depends_on:
+      secrets-init:
+        condition: service_completed_successfully
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U accesshub -d accesshub"]
       interval: 5s
@@ -39,3 +63,4 @@ services:
 volumes:
   accesshub_database:
   accesshub_uploads:
+  accesshub_secrets:
